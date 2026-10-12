@@ -2,7 +2,7 @@
 
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Model](https://img.shields.io/badge/LLM-Claude%20Opus-7c3aed.svg)](https://www.anthropic.com/)
+[![Model](<https://img.shields.io/badge/LLM-Claude%20Opus-7c3aed.svg>)](https://www.anthropic.com/)
 [![Dataset](https://img.shields.io/badge/data-ACDC-orange.svg)](https://www.creatis.insa-lyon.fr/Challenge/acdc/)
 
 Can a large language model turn cardiac MRI **measurements** into a **diagnosis** — with zero
@@ -24,8 +24,8 @@ dual-anchored **zero-shot** segmentation propagated across the full cardiac cycl
 myocardium green · RV purple). From these masks: EF 14%, EDV 352 mL, ESV 304 mL → the
 calibrated LLM answers **DCM** — correctly.
 
-| Cine input (looping) | Zero-shot segmentation, all frames |
-|:---:|:---:|
+|             Cine input (looping)             |            Zero-shot segmentation, all frames            |
+| :-------------------------------------------: | :------------------------------------------------------: |
 | ![Cine MRI loop](figures/cine_patient017.gif) | ![MedSAM2 segmentation loop](figures/seg_patient017.gif) |
 
 ## TL;DR — three findings
@@ -43,13 +43,13 @@ calibrated LLM answers **DCM** — correctly.
 
 ACDC validation cohort, n = 20, five balanced classes, reference-derived (GT) metrics:
 
-| Method | Accuracy | Macro-F1 |
-|---|---:|---:|
-| Random | 20.0% | — |
-| EF-threshold rule | 45.0% | 0.325 |
-| Direct prompt | 55.0% | 0.425 |
-| Naive CoT ("step-by-step") | **40.0% ↓** | 0.369 |
-| **Calibrated CoT (proposed)** | **60.0%** | **0.510** |
+| Method                              |           Accuracy |        Macro-F1 |
+| ----------------------------------- | -----------------: | --------------: |
+| Random                              |              20.0% |              — |
+| EF-threshold rule                   |              45.0% |           0.325 |
+| Direct prompt                       |              55.0% |           0.425 |
+| Naive CoT ("step-by-step")          | **40.0% ↓** |           0.369 |
+| **Calibrated CoT (proposed)** |    **60.0%** | **0.510** |
 
 Per-class F1 (Calibrated CoT): NOR 0.727 · DCM 0.889 · **HCM 0.000** · MINF 0.600 · RV 0.333
 
@@ -62,14 +62,14 @@ metrics (instead of reference-derived) drops Calibrated CoT from 60% → 40%: th
 inherits every upstream segmentation error. Full six-condition results, including the
 predicted-metric arms, are in [`results/llm_results.json`](results/llm_results.json):
 
-| Condition | Metrics source | Prompting | Accuracy | Macro-F1 |
-|---|---|---|---:|---:|
-| A | GT | Direct | 55.0% | 0.425 |
-| B | GT | Naive CoT | 40.0% | 0.369 |
-| E | GT | **Calibrated CoT** | **60.0%** | **0.510** |
-| C | Predicted | Direct | 50.0% | 0.372 |
-| D | Predicted | Naive CoT | 30.0% | 0.269 |
-| F | Predicted | Calibrated CoT | 40.0% | 0.369 |
+| Condition | Metrics source | Prompting                |        Accuracy |        Macro-F1 |
+| --------- | -------------- | ------------------------ | --------------: | --------------: |
+| A         | GT             | Direct                   |           55.0% |           0.425 |
+| B         | GT             | Naive CoT                |           40.0% |           0.369 |
+| E         | GT             | **Calibrated CoT** | **60.0%** | **0.510** |
+| C         | Predicted      | Direct                   |           50.0% |           0.372 |
+| D         | Predicted      | Naive CoT                |           30.0% |           0.269 |
+| F         | Predicted      | Calibrated CoT           |           40.0% |           0.369 |
 
 ## Why naive CoT fails — and what "calibrated" means
 
@@ -142,23 +142,16 @@ mass, strain, RV volumes) to attack the HCM bottleneck, then larger multi-center
 - [CycleQA](https://github.com/zhuoanli/CycleQA) — label-free quality assurance for the same
   zero-shot segmentation under cross-vendor shift.
 
-## Presented at
-
-- **SMRA 2026** (Society for Magnetic Resonance Angiography) — Power Pitch:
-  *Clinically Calibrated Large Language Model Reasoning for Zero-Shot Cardiac MRI Pathology
-  Classification from Segmentation-Derived Metrics.* Zhuoan Li.
-- **MIUA 2026** (Medical Image Understanding and Analysis) — short paper:
-  *Large Language Model Reasoning for Cardiac Pathology Classification from
-  Segmentation-Derived Metrics.* Zhuoan Li, Behzad Sharif.
+## Citation
 
 ```bibtex
-@misc{li2026llmcardiac,
-  author = {Li, Zhuoan},
-  title  = {Clinically Calibrated Large Language Model Reasoning for Zero-Shot Cardiac MRI
-            Pathology Classification from Segmentation-Derived Metrics},
-  year   = {2026},
-  note   = {SMRA 2026 Power Pitch},
-  url    = {https://github.com/zhuoanli/llm-cardiac-pathology}
+@inproceedings{li2026llmcardiac,
+  author    = {Li, Zhuoan},
+  title     = {Large Language Model Reasoning for Cardiac Pathology Classification
+               from Segmentation-Derived Metrics},
+  booktitle = {Medical Image Understanding and Analysis (MIUA)},
+  publisher = {Springer},
+  year      = {2026}
 }
 ```
 

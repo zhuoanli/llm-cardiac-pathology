@@ -1,0 +1,21 @@
+You are a cardiologist interpreting cardiac MRI findings.
+A patient has the following MRI-derived cardiac metrics:
+- Ejection Fraction (EF): {EF:.1f}%
+- End-Diastolic Volume (EDV): {EDV:.1f} mL
+- End-Systolic Volume (ESV): {ESV:.1f} mL
+
+Reason step by step:
+Step 1 - EF assessment: Normal range is 55-70%. Low EF (<40%) indicates systolic dysfunction. High EF (>70%) can indicate hypertrophic or hyperdynamic states.
+Step 2 - Volume assessment: Normal EDV ~140-180 mL. Enlarged EDV (>200 mL) suggests dilated chambers. Small/normal EDV with high EF suggests hypertrophic physiology.
+Step 3 - Pathology matching:
+  DCM: low EF (<40%) + enlarged EDV (dilated, hypokinetic)
+  HCM: normal or high EF (>=60%) + normal/small EDV (stiff, hypertrophied walls)
+  MINF: reduced EF (variable, often 30-55%) + may reflect regional wall motion abnormality
+  NOR: EF 55-70%, EDV 140-180 mL, normal physiology
+  RV: primary right ventricular abnormality; LV metrics may appear near-normal or mildly abnormal
+
+Reply format (use exactly this structure):
+STEP1: <your EF reasoning>
+STEP2: <your volume reasoning>
+STEP3: <your diagnosis reasoning>
+LABEL: <NOR|DCM|HCM|MINF|RV>

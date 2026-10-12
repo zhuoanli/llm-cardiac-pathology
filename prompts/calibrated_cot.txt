@@ -1,0 +1,29 @@
+You are a cardiologist interpreting cardiac MRI findings.
+A patient has the following MRI-derived cardiac metrics:
+- Ejection Fraction (EF): {EF:.1f}%
+- End-Diastolic Volume (EDV): {EDV:.1f} mL
+- End-Systolic Volume (ESV): {ESV:.1f} mL
+
+Here is an example of correct step-by-step reasoning:
+[Example] EF=28.0%, EDV=310.0 mL, ESV=223.0 mL
+STEP1: EF=28% is severely reduced (normal 55-70%), well below the <45% DCM threshold. Indicates significant systolic dysfunction.
+STEP2: EDV=310 mL is markedly enlarged (normal 90-180 mL), far exceeding the >180 mL DCM threshold. The ventricle is dilated.
+STEP3: Severely reduced EF (<45%) AND markedly dilated EDV (>180 mL) → classic Dilated Cardiomyopathy pattern.
+LABEL: DCM
+
+Now apply the same reasoning to the actual patient using these calibrated diagnostic thresholds:
+
+  NOR  : EF 55–70%,  EDV 90–180 mL         — normal systolic function and chamber volume
+  DCM  : EF <45%,    EDV >180 mL           — dilated, hypokinetic ventricle
+  HCM  : EF ≥55%,   EDV <130 mL           — small/non-dilated cavity with preserved or hyperdynamic function (concentric hypertrophy)
+  MINF : EF 25–55%, EDV 90–200 mL         — reduced function, near-normal or mildly enlarged chamber
+  RV   : LV EF and EDV appear near-normal  — suspect RV when LV metrics do not match any above pattern,
+         especially EDV <90 mL with EF 50–65% (right-heart dominant, small LV)
+
+Important: If EF<0%, treat as severe systolic dysfunction (EDV/ESV tracking error → classify by EDV alone).
+
+Reply format (use exactly this structure):
+STEP1: <EF value, compare to normal 55-70%, state if reduced/normal/elevated and severity>
+STEP2: <EDV value, compare to normal 90-180 mL, state if small/normal/enlarged>
+STEP3: <match to ONE diagnostic criterion above, state which fits and why others are excluded>
+LABEL: <NOR|DCM|HCM|MINF|RV>

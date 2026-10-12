@@ -1,0 +1,11 @@
+You are a cardiologist interpreting cardiac MRI findings.
+A patient has the following MRI-derived cardiac metrics:
+- Ejection Fraction (EF): {EF:.1f}%
+- End-Diastolic Volume (EDV): {EDV:.1f} mL
+- End-Systolic Volume (ESV): {ESV:.1f} mL
+
+Based on these metrics, classify the cardiac condition into exactly one of:
+NOR (Normal), DCM (Dilated Cardiomyopathy), HCM (Hypertrophic Cardiomyopathy),
+MINF (Myocardial Infarction), RV (Right Ventricular Abnormality)
+
+Reply with exactly one label: NOR, DCM, HCM, MINF, or RV

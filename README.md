@@ -161,7 +161,3 @@ mass, strain, RV volumes) to attack the HCM bottleneck, then larger multi-center
 [MedSAM2](https://arxiv.org/abs/2408.00874) (Zhu et al., 2024) ·
 [SAM 2](https://arxiv.org/abs/2408.00714) (Ravi et al., 2024) ·
 [Claude](https://www.anthropic.com/) (Anthropic)
-
-## Contact
-
-Zhuoan Li · Weldon School of Biomedical Engineering, Purdue University · li4533@purdue.edu

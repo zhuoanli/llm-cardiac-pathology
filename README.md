@@ -5,7 +5,7 @@
 [![Model](<https://img.shields.io/badge/LLM-Claude%20Opus-7c3aed.svg>)](https://www.anthropic.com/)
 [![Dataset](https://img.shields.io/badge/data-ACDC-orange.svg)](https://www.creatis.insa-lyon.fr/Challenge/acdc/)
 
-Can a large language model turn cardiac MRI **measurements** into a **diagnosis** — with zero
+Can a large language model turn cardiac MRI **measurements** into a **diagnosis** with zero
 task-specific training?
 
 This repository evaluates an LLM (Claude Opus) as a **retraining-free reasoning layer** on top of
@@ -22,21 +22,21 @@ an automated cardiac MRI pipeline: zero-shot segmentation (MedSAM2) → LV clini
 A real ACDC validation patient (dilated cardiomyopathy). Left: the cine input. Right: MedSAM2
 dual-anchored **zero-shot** segmentation propagated across the full cardiac cycle (LV blue ·
 myocardium green · RV purple). From these masks: EF 14%, EDV 352 mL, ESV 304 mL → the
-calibrated LLM answers **DCM** — correctly.
+calibrated LLM returns the correct diagnosis of **DCM**.
 
 |             Cine input (looping)             |            Zero-shot segmentation, all frames            |
 | :-------------------------------------------: | :------------------------------------------------------: |
 | ![Cine MRI loop](figures/cine_patient017.gif) | ![MedSAM2 segmentation loop](figures/seg_patient017.gif) |
 
-## TL;DR — three findings
+## Key findings
 
 1. **It works, modestly:** direct prompting beats an EF-threshold rule
    (55% vs 45% five-class accuracy, chance = 20%).
 2. **Naive "think step-by-step" makes it *worse*** (55% → 40%): unconstrained chain-of-thought
    over-interprets borderline measurements. Anchoring the same reasoning to **explicit clinical
    thresholds** plus one worked example recovers and wins: **60% accuracy, macro-F1 0.510**.
-3. **An honest negative result:** HCM is never recovered — **F1 = 0.000 for every prompting
-   strategy** — because LV cavity volumetrics cannot encode a wall-thickness disease. The
+3. **An honest negative result:** HCM is never recovered (**F1 = 0.000 for every prompting
+   strategy**), because LV cavity volumetrics cannot encode a wall-thickness disease. The
    diagnostic ceiling is set by the **input biomarkers**, not by the model.
 
 ## Results
@@ -45,7 +45,7 @@ ACDC validation cohort, n = 20, five balanced classes, reference-derived (GT) me
 
 | Method                              |           Accuracy |        Macro-F1 |
 | ----------------------------------- | -----------------: | --------------: |
-| Random                              |              20.0% |              — |
+| Random                              |              20.0% |            n/a |
 | EF-threshold rule                   |              45.0% |           0.325 |
 | Direct prompt                       |              55.0% |           0.425 |
 | Naive CoT ("step-by-step")          | **40.0% ↓** |           0.369 |
@@ -71,7 +71,7 @@ predicted-metric arms, are in [`results/llm_results.json`](results/llm_results.j
 | D         | Predicted      | Naive CoT                |           30.0% |           0.269 |
 | F         | Predicted      | Calibrated CoT           |           40.0% |           0.369 |
 
-## Why naive CoT fails — and what "calibrated" means
+## Why naive CoT fails and what calibration means
 
 Asked to "reason step by step" over EF/EDV/ESV, the model invents its own reference ranges
 mid-reasoning and talks itself out of correct answers on borderline cases. The **calibrated**
@@ -79,14 +79,14 @@ prompt keeps the step-by-step structure but pins each step to explicit diagnosti
 (e.g., DCM: EF < 45% **and** EDV > 180 mL) and shows one worked example. The three exact prompt
 templates are in [`prompts/`](prompts/):
 
-- [`prompts/direct.txt`](prompts/direct.txt) — single-instruction classification
-- [`prompts/naive_cot.txt`](prompts/naive_cot.txt) — generic stepwise assessment
-- [`prompts/calibrated_cot.txt`](prompts/calibrated_cot.txt) — threshold-anchored reasoning + one-shot example
+- [`prompts/direct.txt`](prompts/direct.txt): single-instruction classification
+- [`prompts/naive_cot.txt`](prompts/naive_cot.txt): generic stepwise assessment
+- [`prompts/calibrated_cot.txt`](prompts/calibrated_cot.txt): threshold-anchored reasoning with a one-shot example
 
 ## The HCM negative result
 
-Hypertrophic cardiomyopathy thickens the **myocardial wall** while the LV **cavity** — the only
-thing EF, EDV and ESV describe — can look normal. Accordingly, every prompting strategy scores
+Hypertrophic cardiomyopathy thickens the **myocardial wall** while the LV **cavity**, the only
+structure that EF, EDV and ESV describe, can look normal. Accordingly, every prompting strategy scores
 F1 = 0.000 on HCM: the four HCM cases scatter to NOR, MINF and RV, never to HCM. This is an
 input-level information bottleneck, not a prompting failure, and it motivates the roadmap below.
 
@@ -103,8 +103,8 @@ python plot_results.py              # regenerates figures/results.png
 ```
 
 The committed [`results/llm_results.json`](results/llm_results.json) is the exact run reported
-above, including every raw LLM response (`records[*].llm_output`) — the full reasoning traces
-are auditable without spending API credits.
+above, including every raw LLM response (`records[*].llm_output`), so the full reasoning
+traces can be audited without spending API credits.
 
 ## Repository structure
 
@@ -123,23 +123,23 @@ are auditable without spending API credits.
 ## Scope and limitations
 
 - **Proof-of-concept cohort:** n = 20, deliberately class-balanced (4 per class). The trustworthy
-  findings are the *ordering* (naive CoT < direct < calibrated) and the HCM zero — not the
+  findings are the *ordering* (naive CoT < direct < calibrated) and the HCM zero, not the
   absolute 60%.
 - Headline numbers use **reference-derived metrics** to isolate the reasoning layer; the
   predicted-metric arms quantify how segmentation error compounds.
 - Single LLM (`claude-opus-4-7`), single run; thresholds in the calibrated prompt are
   representative textbook values, not fitted to the cohort's labels.
-- Not a medical device; research code only — no clinical use.
+- Research code only; not a medical device and not intended for clinical use.
 
 **Roadmap:** morphology-aware inputs computable from the same masks (wall thickness, myocardial
 mass, strain, RV volumes) to attack the HCM bottleneck, then larger multi-center validation.
 
 ## Related repositories
 
-- [4DCMR-Segmentation-via-Foundation-Model](https://github.com/zhuoanli/4DCMR-Segmentation-via-Foundation-Model) —
+- [4DCMR-Segmentation-via-Foundation-Model](https://github.com/zhuoanli/4DCMR-Segmentation-via-Foundation-Model):
   the upstream zero-shot segmentation pipeline (MedSAM2, dual-anchored propagation) that produces
   the metrics used here.
-- [CycleQA](https://github.com/zhuoanli/CycleQA) — label-free quality assurance for the same
+- [CycleQA](https://github.com/zhuoanli/CycleQA): label-free quality assurance for the same
   zero-shot segmentation under cross-vendor shift.
 
 ## Citation
